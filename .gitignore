@@ -23,3 +23,7 @@ public/cache/*
 .rbenv-version
 bin/
 .bundle/
+db/db_development
+db/db_test
+.ruby-gemset
+.ruby-version

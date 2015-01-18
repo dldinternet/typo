@@ -40,6 +40,9 @@ RSpec.configure do |config|
   config.before(:each) do
     Localization.lang = :default
   end
+
+  config.infer_spec_type_from_file_location!
+
 end
 
 def define_spec_public_cache_directory
