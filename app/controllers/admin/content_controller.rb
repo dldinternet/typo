@@ -130,8 +130,8 @@ class Admin::ContentController < Admin::BaseController
         @merged_article = @article.merge_with(@merge.id)
         flash[:notice] = _('Successfully merged articles.')
         redirect_to :action => 'edit', :id => @merged_article.id
-      rescue
-        flash[:error] = _('The second article ID is not valid.')
+      rescue => e
+        flash[:error] = _('The merge failed. Is the second article ID valid?')
         redirect_to :action => 'edit', :id => @article.id
       end
     else

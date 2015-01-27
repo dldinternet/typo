@@ -426,13 +426,10 @@ class Article < Content
     self.body = "#{self.body || ''} #{other_article.body || ''}".strip
 
     # merge any comments into the new article
-    comments = Comment.find_by_article_id(other_article.id)
-    if comments
-      comments.each do |comment|
-        self.comments << Comment.new(comment.attributes.except('article_id'))
-        comment.article_id = self.id
-        comment.save
-      end
+    Comment.where(article_id: other_article.id).find_each do |comment|
+      # self.comments << Comment.new(comment.attributes.except('article_id'))
+      comment.article_id = self.id
+      comment.save
     end
     self.save
 

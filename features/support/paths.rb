@@ -24,6 +24,9 @@ module NavigationHelpers
     when /^the article page (for|of) "(.*?)"$/i
       "/admin/content/edit/#{Article.find_by_title($2).id}"
 
+    when /^the article view (for|of) "(.*?)"$/i
+      Article.find_by_title($2).permalink_url
+
     when /^the manage articles page$/i
       '/admin/content'
 
