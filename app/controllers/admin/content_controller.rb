@@ -125,12 +125,12 @@ class Admin::ContentController < Admin::BaseController
     end
 
     if params['merge_with']
-      @merge = Article.find(params['merge_with'])
-      if @merge and @merge.valid?
+      begin
+        @merge = Article.find(params['merge_with'])
         @merged_article = @article.merge_with(@merge.id)
         flash[:notice] = _('Successfully merged articles.')
         redirect_to :action => 'edit', :id => @merged_article.id
-      else
+      rescue
         flash[:error] = _('The second article ID is not valid.')
         redirect_to :action => 'edit', :id => @article.id
       end
