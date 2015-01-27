@@ -607,6 +607,23 @@ describe Admin::ContentController do
       end
     end
 
+    describe 'merge action' do
+
+      it 'should succeed for admins' do
+        @article2 = Factory(:article, title: 'Article2', body: 'Article 2 for admin')
+        post :merge, :id => @article.id, :merge_with => @article2.id
+        response.should redirect_to(:action => 'edit', id: @article.id)
+        expect(flash[:notice]).to eq _('Successfully merged articles.')
+      end
+
+      it 'should do nothing for admins without a valid second article' do
+        post :merge, :id => @article.id
+        response.should redirect_to(:action => 'edit', id: @article.id)
+        expect(flash[:notice]).to eq _('No second article to merge.')
+      end
+
+    end
+
   end
 
   describe 'with publisher connection' do
@@ -670,5 +687,20 @@ describe Admin::ContentController do
       end
 
     end
+
+    describe 'merge action' do
+
+      it 'should not succeed for non-admins' do
+        @article2 = Factory(:article, title: 'Article2', body: 'Article 2 for admin')
+        post :merge, :id => @article.id, :merge_with => @article2.id
+        # ap response.headers.to_a
+        response.should redirect_to(:action => 'edit', id: @article.id)
+        # ap flash[:error]
+        expect(flash[:error]).to eq _('Error, only admins are allowed to merge articles.')
+      end
+
+    end
+
   end
+
 end

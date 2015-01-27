@@ -630,5 +630,51 @@ describe Article do
     end
 
   end
-end
 
+
+  describe '#merge_with' do
+
+    before do
+      #articles
+      @article1 = FactoryGirl.create(:article, title: 'Article 1 Title', body: 'Article 1 body.')
+      @article2 = Factory.create!(:article, title: 'Article 2 Title', body: 'Article 2 body.')
+
+      #comments
+      @comment1 = Factory.create!(:comment, body: 'Comment1')
+      @comment2 = Factory.create!(:comment, body: 'Comment2')
+      @article1.comments << @comment1
+      @article2.comments << @comment2
+
+      @article3 = @article1.merge_with(@article2.id)
+    end
+
+    it 'should not create a new article' do
+      @article3.id.should     == @article1.id
+      @article3.id.should_not == @article2.id
+    end
+
+    it 'should return an article with the title of the first article' do
+      @article3.title.should == 'Article 1 Title'
+    end
+
+    it 'should contain the text of both articles' do
+      @article3.body.should include 'Article 1 body'
+      @article3.body.should include 'Article 2 body'
+      @article3.body.should match %r'Article 1 body\s+Article 2 body'
+    end
+
+    it 'should delete both the original articles' do
+      Article.exists?(@article1.id).should == false
+      Article.exists?(@article2.id).should == false
+    end
+
+    it 'should contain the comments from both articles' do
+      @article3.comments.count.should == 2
+      @article3.comments.each do |comment|
+        comment.article.should eq @article3
+      end
+    end
+
+  end
+
+end

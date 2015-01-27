@@ -113,6 +113,28 @@ class Admin::ContentController < Admin::BaseController
     render :text => nil
   end
 
+
+  def merge
+    @article = Article.find(params[:id])
+
+    # Must be an admin to merge articles
+    unless current_user.admin?
+      flash[:error] = _('Error, only admins are allowed to merge articles.')
+      redirect_to :action => 'edit', :id => @article.id
+      return
+    end
+
+    if params['merge_with']
+      @merge = Article.find(params['merge_with'])
+      @merged_article = @article.merge_with(@merge.id)
+      flash[:notice] = _('Successfully merged articles.')
+      redirect_to :action => 'edit', :id => @merged_article.id
+    else
+      flash[:notice] = _('No second article to merge.')
+      redirect_to :action => 'edit', :id => @article.id
+    end
+  end
+
   protected
 
   def get_fresh_or_existing_draft_for_article

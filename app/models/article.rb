@@ -416,6 +416,32 @@ class Article < Content
     user.admin? || user_id == user.id
   end
 
+  def merge_with(other_article_id = nil)
+    return self.id if (other_article_id.nil? or other_article_id == self.id)
+
+    other_article = Article.find(other_article_id)
+    return self.id unless other_article.valid?
+
+    # merge second article body
+    self.body = "#{self.body || ''} #{other_article.body || ''}".strip
+
+    # merge any comments into the new article
+    comments = Comment.find_by_article_id(other_article.id)
+    if comments
+      comments.each do |comment|
+        self.comments << Comment.new(comment.attributes.except('article_id'))
+        comment.article_id = self.id
+        comment.save
+      end
+    end
+    self.save
+
+    # destroy the original articles
+    Article.destroy(other_article.id)
+
+    self
+  end
+
   protected
 
   def set_published_at

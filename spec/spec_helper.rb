@@ -7,6 +7,7 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'factory_girl'
 require 'rexml/document'
+require 'awesome_print'
 FactoryGirl.find_definitions
 
 User

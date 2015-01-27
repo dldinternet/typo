@@ -41,11 +41,17 @@ Given /^the blog is set up$/ do
                 :profile_id => 1,
                 :name => 'admin',
                 :state => 'active'})
+  User.create!({:login => 'user',
+                :password => 'uuuuuuuu',
+                :email => 'john@doe.com',
+                :profile_id => Profile.find_by_label('contributor').id,
+                :name => 'user',
+                :state => 'active'})
 end
 
-And /^I am logged into the admin panel$/ do
+And /^I am logged into the admin panel as "(.+?)"$/ do |user|
   visit '/accounts/login'
-  fill_in 'user_login', :with => 'admin'
+  fill_in 'user_login', :with => user
   fill_in 'user_password', :with => 'aaaaaaaa'
   click_button 'Login'
   if page.respond_to? :should
@@ -273,11 +279,22 @@ Then /^(?:|I )should have the following query string:$/ do |expected_pairs|
   end
 end
 
+Then /^show me the page source$/ do
+  require 'awesome_print'
+  body = Nokogiri::HTML(page.body.html_safe)
+  ap body
+end
+
+Then /^save and open the page$/ do
+  save_and_open_page
+end
+
 Then /^show me the page$/ do
   save_and_open_page
 end
 
 
-When(/^I click on the Categories link$/) do
-  pending
+Then(/^I should be redirected to the login page$/) do
+  response.redirect?.should eq True
+  response['Location'].should_not be nil
 end
