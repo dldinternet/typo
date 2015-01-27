@@ -5,7 +5,7 @@ Feature: Manage Categories
 
   Background:
     Given the blog is set up
-    And I am logged into the admin panel
+    And I am logged into the admin panel as "admin"
 
   Scenario: Successfully navigate to categories
     Given I am on the admin dashboard page
