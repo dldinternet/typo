@@ -126,9 +126,14 @@ class Admin::ContentController < Admin::BaseController
 
     if params['merge_with']
       @merge = Article.find(params['merge_with'])
-      @merged_article = @article.merge_with(@merge.id)
-      flash[:notice] = _('Successfully merged articles.')
-      redirect_to :action => 'edit', :id => @merged_article.id
+      if @merge and @merge.valid?
+        @merged_article = @article.merge_with(@merge.id)
+        flash[:notice] = _('Successfully merged articles.')
+        redirect_to :action => 'edit', :id => @merged_article.id
+      else
+        flash[:error] = _('The second article ID is not valid.')
+        redirect_to :action => 'edit', :id => @article.id
+      end
     else
       flash[:notice] = _('No second article to merge.')
       redirect_to :action => 'edit', :id => @article.id
